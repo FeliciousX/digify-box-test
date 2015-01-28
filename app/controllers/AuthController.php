@@ -2,8 +2,6 @@
 
 class AuthController extends BaseController {
 
-    protected $layout = 'master';
-
     public function loginWithBox() {
 
         // get data from input
