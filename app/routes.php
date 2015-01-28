@@ -11,7 +11,6 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', 'HomeController@index');
+
+Route::get('/login/box', array('as' => 'login.box', 'uses' => 'AuthController@loginWithBox'));
