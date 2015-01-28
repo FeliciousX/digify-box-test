@@ -2,7 +2,39 @@
 
 class AuthController extends BaseController {
 
-    public function loginWithBox() {
+    protected $layout = 'master';
+
+    public function login()
+    {
+        $data = array();
+        $data['message'] = array();
+
+        if (Request::isMethod('post')) {
+            $validator = Validator::make(Input::all(), array(
+                'user.username' => 'required',
+                'user.password' => 'required'
+            ));
+
+            if ($validator->passes()) {
+                $credentials = array(
+                    'username' => Input::get('user.username'),
+                    'password' => Input::get('user.password')
+                );
+
+                if (Auth::attempt($credentials)) {
+                    return Redirect::route('profile');
+                }
+            }
+
+            Session::put('error', 'Username and/or password invalid.');
+            return Redirect::back();
+        }
+
+        return View::make('pages.login', $data);
+    }
+
+    public function loginWithBox()
+    {
 
         // get data from input
         $code = Input::get('code');
@@ -20,11 +52,13 @@ class AuthController extends BaseController {
             // Send a request with it
             $result = json_decode($box->request('/users/me'), true);
 
-            // TODO: @feliciousx redirect user to file listing
-            $message = 'Your Box id is: ' . $result['id'] . ' and your name is ' . $result['name'];
-            echo $message . "<br/>";
+            // TODO: @feliciousx log user in
+            // TODO: @feliciousx redirect user profile page
+            Session::put('info', 'Your Box id is: ' . $result['id'] . ' and your name is ' . $result['name']);
 
             dd($result);
+
+            Redirect::route('index');
         }
         // ask for permission first
         else {
@@ -36,4 +70,10 @@ class AuthController extends BaseController {
         }
     }
 
+    public function logout()
+    {
+        Auth::logout();
+
+        return Redirect::route('login');
+    }
 }

@@ -1,9 +1,10 @@
 @extends ('master')
+
 @section ('extra_css')
 @stop
 
 @section ('content')
-<h1>I miss you!</h1>
+<p>Welcome to your home page.</p>
 @stop
 
 @section ('extra_js')
