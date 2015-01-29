@@ -32,7 +32,7 @@ return array(
          */
         'Box' => array(
             'client_id'     => 'mu6ovnovbhu0o5i3anetwa8gc106u0w4',
-            'client_secret' => 'iQD1fsDGJmQ8NGcoipaidLHXO88Fwd4H',
+            'client_secret' => 'IbIJ4vPbGyvQxWqrEpT5281hEJ9zRb9a',
             'scope'         => array(),
         ),
 	)

@@ -21,7 +21,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @var array
 	 */
-	protected $hidden = array('password', 'remember_token');
+	protected $hidden = array('box_token', 'refresh_token', 'remember_token');
 
     public function getAuthIdentifier()
     {
@@ -51,5 +51,57 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function getReminderEmail()
     {
         return $this->login;
+    }
+
+    public function getBoxToken()
+    {
+        return $this->box_token;
+    }
+
+    public function setBoxToken($value)
+    {
+        $this->box_token = $value;
+    }
+
+    public function getRefreshToken()
+    {
+        return $this->refresh_token;
+    }
+
+    public function setRefreshToken($value)
+    {
+        $this->refresh_token = $value;
+    }
+
+    public static function handleBoxLogin($token, $data)
+    {
+        if (empty($token)) throw new Exception('No token received');
+        if (empty($data)) throw new Exception('No user data given');
+
+        $login = $data['login'];
+        $name = $data['name'];
+        $box_token = $token->getAccessToken();
+
+        // try to find if user exist
+        $user = User::where('login', '=', $login)->first();
+
+        if ( ! $user) {
+            // user don't exist, create a new user
+            $user = new User();
+            $user->name = $name;
+            $user->login = $login;
+            $user->password = Hash::make($box_token);
+
+        }
+
+        $user->setBoxToken($box_token);
+
+        if ($token->getRefreshToken())
+            $user->setRefreshToken($token->getRefreshToken());
+
+        $user->save();
+
+        // Log user in
+        Auth::login($user);
     }
 }
