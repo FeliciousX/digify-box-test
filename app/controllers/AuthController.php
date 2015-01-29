@@ -1,9 +1,13 @@
 <?php
 
-Use OAuth\Common\Http\Exception\TokenResponseException;
-
+/**
+ * Handles all user session for logging in and out
+ */
 class AuthController extends BaseController {
 
+    /**
+     * Simple form login
+     */
     public function login()
     {
         $data = array();
@@ -33,6 +37,9 @@ class AuthController extends BaseController {
         return View::make('pages.login', $data);
     }
 
+    /**
+     * Login with Box OAuth 2.0
+     */
     public function loginWithBox()
     {
         // get data from input
@@ -48,6 +55,8 @@ class AuthController extends BaseController {
         if ( ! empty($code)) {
             // Callback request from Box, get the token
             $token = $box->requestAccessToken($code, $state);
+
+            Session::put('token', $token);
 
             // Send a request with it
             $result = json_decode($box->request('/users/me'), true);
@@ -65,6 +74,9 @@ class AuthController extends BaseController {
         }
     }
 
+    /**
+     * handles login after having token and user data
+     */
     public function handleBoxLogin($token, $data)
     {
         if (empty($token)) throw new Exception('No token received');
@@ -97,11 +109,24 @@ class AuthController extends BaseController {
         Auth::login($user);
     }
 
-    // TODO: @feliciousx revoke access token aswell
+    /**
+     * Keeps user logged as long as they are active
+     */
+    public function refreshToken()
+    {
+        // user Curl instead of StreamClient
+        OAuth::setHttpClient('CurlClient');
+        // get Box service
+        $box = OAuth::consumer('Box', route('login.box'));
+
+        $token = $box->refreshAccessToken(Session::get('token'));
+        Session::put('token', $token);
+    }
+
+    // TODO: @feliciousx revoke refresh token aswell
     public function logout()
     {
         Auth::logout();
-
         return Redirect::route('login');
     }
 }
