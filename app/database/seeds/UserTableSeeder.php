@@ -6,9 +6,9 @@ class UserTableSeeder extends Seeder {
     {
         $users = array(
             array(
-                'username'  => 'feliciousx',
+                'login'     => 'love@example.com',
                 'password'  => Hash::make('feliciousx'),
-                'email'     => 'feliciousx@gmail.com'
+                'name'      => 'Debbie Tan'
             )
         );
 

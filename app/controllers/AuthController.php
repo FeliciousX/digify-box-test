@@ -11,13 +11,13 @@ class AuthController extends BaseController {
 
         if (Request::isMethod('post')) {
             $validator = Validator::make(Input::all(), array(
-                'user.username' => 'required',
+                'user.login' => 'required',
                 'user.password' => 'required'
             ));
 
             if ($validator->passes()) {
                 $credentials = array(
-                    'username' => Input::get('user.username'),
+                    'login' => Input::get('user.login'),
                     'password' => Input::get('user.password')
                 );
 

@@ -9,7 +9,7 @@
         {{ Form::open() }}
         @include ('fragments.message')
         <div class="form-group">
-            <input name="user[username]" type="username" class="form-control" id="username" placeholder="Username" required>
+            <input name="user[login]" type="username" class="form-control" id="login" placeholder="Login email" required>
         </div>
         <div class="form-group">
             <input name="user[password]" type="password" class="form-control" id="password" placeholder="Password" required>
