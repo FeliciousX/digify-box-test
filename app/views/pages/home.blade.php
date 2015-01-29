@@ -4,7 +4,12 @@
 @stop
 
 @section ('content')
-<p>Welcome to your home page.</p>
+<div class="row">
+<div class="col-xs-4 col-xs-offset-4">
+    <h1>Welcome to Boxify.</h1>
+    <a href="{{ action('login.box') }}" class="btn btn-primary btn-lg">Log in via Box</a>
+</div>
+</div>
 @stop
 
 @section ('extra_js')

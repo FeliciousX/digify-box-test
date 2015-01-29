@@ -4,8 +4,6 @@ Use OAuth\Common\Http\Exception\TokenResponseException;
 
 class AuthController extends BaseController {
 
-    protected $layout = 'master';
-
     public function login()
     {
         $data = array();
@@ -35,19 +33,16 @@ class AuthController extends BaseController {
         return View::make('pages.login', $data);
     }
 
-    // TODO: @feliciousx log user in
-    // TODO: @feliciousx redirect user profile page
     public function loginWithBox()
     {
         // get data from input
         $code = Input::get('code');
         $state = Input::get('state');
 
-        $OAuth = new OAuth();
         // user Curl instead of StreamClient
-        $OAuth::setHttpClient('CurlClient');
+        OAuth::setHttpClient('CurlClient');
         // get Box service
-        $box = $OAuth::consumer('Box', route('login.box'));
+        $box = OAuth::consumer('Box', route('login.box'));
 
         // if code is provided, get user data and sign in
         if ( ! empty($code)) {
@@ -57,8 +52,8 @@ class AuthController extends BaseController {
             // Send a request with it
             $result = json_decode($box->request('/users/me'), true);
 
-            User::handleBoxLogin($token, $result);
-            Redirect::route('profile');
+            $this->handleBoxLogin($token, $result);
+            return Redirect::route('profile');
         }
         // ask for permission first
         else {
@@ -70,6 +65,39 @@ class AuthController extends BaseController {
         }
     }
 
+    public function handleBoxLogin($token, $data)
+    {
+        if (empty($token)) throw new Exception('No token received');
+        if (empty($data)) throw new Exception('No user data given');
+
+        $login = $data['login'];
+        $name = $data['name'];
+        $box_token = $token->getAccessToken();
+
+        // try to find if user exist
+        $user = User::where('login', '=', $login)->first();
+
+        if ( ! $user) {
+            // user don't exist, create a new user
+            $user = new User();
+            $user->name = $name;
+            $user->login = $login;
+            $user->password = Hash::make($box_token);
+
+        }
+
+        $user->setBoxToken($box_token);
+
+        if ($token->getRefreshToken())
+            $user->setRefreshToken($token->getRefreshToken());
+
+        $user->save();
+
+        // Log user in
+        Auth::login($user);
+    }
+
+    // TODO: @feliciousx revoke access token aswell
     public function logout()
     {
         Auth::logout();

@@ -72,36 +72,4 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     {
         $this->refresh_token = $value;
     }
-
-    public static function handleBoxLogin($token, $data)
-    {
-        if (empty($token)) throw new Exception('No token received');
-        if (empty($data)) throw new Exception('No user data given');
-
-        $login = $data['login'];
-        $name = $data['name'];
-        $box_token = $token->getAccessToken();
-
-        // try to find if user exist
-        $user = User::where('login', '=', $login)->first();
-
-        if ( ! $user) {
-            // user don't exist, create a new user
-            $user = new User();
-            $user->name = $name;
-            $user->login = $login;
-            $user->password = Hash::make($box_token);
-
-        }
-
-        $user->setBoxToken($box_token);
-
-        if ($token->getRefreshToken())
-            $user->setRefreshToken($token->getRefreshToken());
-
-        $user->save();
-
-        // Log user in
-        Auth::login($user);
-    }
 }

@@ -9,7 +9,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Pox</a>
+            {{ link_to_route('index', 'Boxify', null, array('class' => 'navbar-brand')) }}
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

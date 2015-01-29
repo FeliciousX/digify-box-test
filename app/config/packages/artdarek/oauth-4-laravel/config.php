@@ -31,8 +31,8 @@ return array(
          * Box
          */
         'Box' => array(
-            'client_id'     => 'mu6ovnovbhu0o5i3anetwa8gc106u0w4',
-            'client_secret' => 'IbIJ4vPbGyvQxWqrEpT5281hEJ9zRb9a',
+            'client_id'     => $_ENV['oauth.Box.client_id'],
+            'client_secret' => $_ENV['oauth.Box.client_secret'],
             'scope'         => array(),
         ),
 	)
