@@ -99,7 +99,7 @@ class AuthController extends BaseController {
         $user->setRefreshToken($token->getRefreshToken());
         $user->save();
 
-        return Redirect::to(Session::pull('redirect'));
+        return Redirect::to(Request::server('HTTP_REFERER'));
     }
 
     public function logout()

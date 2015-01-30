@@ -40,18 +40,25 @@ class BoxAPIController extends \BaseController {
 
 	/**
 	 * Store a newly created resource in storage.
-	 *
+     *
+     * TODO: Allow user to upload file
+     *
 	 * @return Response
 	 */
 	public function store()
 	{
-        $name = Input::get('name');
-        $parent_id = Input::get('parent.id');
+        $name = Input::get('fileName');
+        $parent_id = Input::get('parentId');
 
-        $parent = ['id' => $parent_id];
+        // build body
+        $body = [
+            'name' => $name,
+            'parent' => [ 'id' => $parent_id ]
+        ];
 
-        
-        return Redirect::to(Session::pull('redirect'));
+        $result = $this->box->request('folders', 'POST', json_encode($body));
+
+        return Redirect::to(Request::server('HTTP_REFERER'));
 	}
 
 
@@ -63,24 +70,9 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function show($id)
 	{
-        $type = Input::get('type');
-
-        if (strcmp($type, 'folder') == 0) {
-            $result = json_decode($this->box->request('/folders/'.$id));
-            View::share('folder', $result);
-            return View::make('pages.box');
-        }
-        elseif (strcmp($type, 'file') == 0) {
-            // TODO: @feliciousx use box view api to show
-            /**
-            $response = Response::make($this->box->request('/files/'.$id.'/content'), 200);
-            $response->header('Content-Disposition', 'attachment; filename='.$id);
-            $response->header('Content-Type', 'application/');
-            return $response;
-            **/
-        }
-
-        return Redirect::to(Session::pull('redirect'));
+        $result = json_decode($this->box->request('/folders/'.$id));
+        View::share('folder', $result);
+        return View::make('pages.box');
 	}
 
 
@@ -104,7 +96,17 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+        $name = Input::get('folderName');
+
+        // build body
+        $body = [
+            'name' => $name,
+            'parent' => [ 'id' => $id ]
+        ];
+
+        $result = $this->box->request('folders', 'POST', json_encode($body));
+
+        return Redirect::to(Request::server('HTTP_REFERER'));
 	}
 
 

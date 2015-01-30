@@ -13,11 +13,6 @@
 
 App::before(function($request)
 {
-    // TODO: @felicioux Test if this works for 'app/start/global@ExpiredTokenException'
-    // set redirect to the requested url unless when refreshing token
-    if ( ! Request::is('oauth/refresh')) {
-        Session::put('redirect', Request::url());
-    }
 });
 
 
