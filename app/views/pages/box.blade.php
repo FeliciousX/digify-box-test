@@ -5,7 +5,14 @@
 
 @section ('content')
 
-{{--- TODO: @feliciousx add breadcrumbs ---}}
+<ol class="breadcrumb">
+    @foreach ($folder->path_collection->entries as $parent)
+    <li>
+        <a href="{{ route('box.show', [$parent->id, 'type' => $parent->type]) }}">{{ $parent->name }}</a>
+    </li>
+    @endforeach
+    <li class="active">{{ $folder->name }}</li>
+</ol>
 
 @include ('fragments.message')
 
@@ -15,7 +22,7 @@
     <th>Name</th>
 </thead>
 <tbody id="listFiles">
-@foreach ($files->entries as $row)
+@foreach ($folder->item_collection->entries as $row)
 <tr>
 <td>{{ $row->type }}</td>
 <td><a href="{{ route('box.show', [$row->id, 'type' => $row->type]) }}">{{ $row->name }}</a></td>
@@ -23,7 +30,15 @@
 @endforeach
 </tbody>
 </table>
-{{ var_dump(Session::get('token')) }}
+<p>
+    {{ var_dump($folder->path_collection) }}
+</p>
+<p>
+    {{ var_dump(Session::get('token')) }}
+</p>
+<p>
+    {{ var_dump(Session::get('redirect')) }}
+</p>
 @stop
 
 @section ('extra_js')

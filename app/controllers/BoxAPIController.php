@@ -2,6 +2,7 @@
 
 class BoxAPIController extends \BaseController {
 
+    // Box API that handles the displaying of listing files and folders
     protected $box;
 
     public function __construct()
@@ -17,9 +18,9 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function index()
 	{
-        $result = json_decode($this->box->request('/folders/0/items'));
+        $result = json_decode($this->box->request('/folders/0'));
 
-        View::share('files', $result);
+        View::share('folder', $result);
         return View::make('pages.box');
 	}
 
@@ -42,7 +43,7 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+        Input::get('');
 	}
 
 
@@ -57,12 +58,12 @@ class BoxAPIController extends \BaseController {
         $type = Input::get('type');
 
         if (strcmp($type, 'folder') == 0) {
-            $result = json_decode($this->box->request('/folders/'.$id.'/items'));
-            View::share('files', $result);
+            $result = json_decode($this->box->request('/folders/'.$id));
+            View::share('folder', $result);
             return View::make('pages.box');
         }
         elseif (strcmp($type, 'file') == 0) {
-            // TODO: @feliciousx allow user to download their file? guess the mimetype?
+            // TODO: @feliciousx use box view api to show
             /**
             $response = Response::make($this->box->request('/files/'.$id.'/content'), 200);
             $response->header('Content-Disposition', 'attachment; filename='.$id);
@@ -71,7 +72,7 @@ class BoxAPIController extends \BaseController {
             **/
         }
 
-        return Redirect::to(Session::pull('referer'));
+        return Redirect::to(Session::pull('redirect'));
 	}
 
 

@@ -13,16 +13,16 @@
 
 App::before(function($request)
 {
-    // TODO: @felicioux Test if this works for 'AuthController@refreshToken'
-    if (Request::server('HTTP_REFERER')) {
-        Session::put('redirect', Request::server('HTTP_REFERER'));
+    // TODO: @felicioux Test if this works for 'app/start/global@ExpiredTokenException'
+    // set redirect to the requested url unless when refreshing token
+    if ( ! Request::is('oauth/refresh')) {
+        Session::put('redirect', Request::url());
     }
 });
 
 
 App::after(function($request, $response)
 {
-    //echo Session::get('redirect');
 });
 
 /*
