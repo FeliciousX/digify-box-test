@@ -1,4 +1,3 @@
-{{--- TODO: @feliciousx link the navbar properly ---}}
 <header class="navbar navbar-default">
     <nav class="container">
         <div class="container-fluid">
@@ -9,12 +8,16 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+            @if (Auth::check())
+            {{ link_to_route('box.index', 'Boxify', null, array('class' => 'navbar-brand')) }}
+            @else
             {{ link_to_route('index', 'Boxify', null, array('class' => 'navbar-brand')) }}
+            @endif
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-            {{--- TODO: @feliciousx list out all links ---}}
+            {{--- TODO: @feliciousx add any links necessary ---}}
             </ul>
             <ul class="nav navbar-nav navbar-right">
             @if (Auth::check())
@@ -23,8 +26,6 @@
                     {{ Auth::user()->name }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li>{{ link_to_route('profile', 'Profile') }}</li>
-                        <li class="divider"></li>
                         <li>{{ link_to_route('logout', 'Logout') }}</li>
                     </ul>
                 </li>

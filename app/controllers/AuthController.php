@@ -26,7 +26,7 @@ class AuthController extends BaseController {
                 );
 
                 if (Auth::attempt($credentials)) {
-                    return Redirect::route('profile');
+                    return Redirect::route('box.index');
                 }
             }
 
@@ -62,7 +62,7 @@ class AuthController extends BaseController {
             $result = json_decode($box->request('/users/me'), true);
 
             $this->handleBoxLogin($token, $result);
-            return Redirect::route('profile');
+            return Redirect::route('box.index');
         }
         // ask for permission first
         else {
