@@ -111,6 +111,8 @@ class AuthController extends BaseController {
 
     /**
      * Keeps user logged as long as they are active
+     *
+     * TODO: @feliciousx make this easier to access
      */
     public function refreshToken()
     {
@@ -121,6 +123,13 @@ class AuthController extends BaseController {
 
         $token = $box->refreshAccessToken(Session::get('token'));
         Session::put('token', $token);
+
+        $user = Auth::user();
+        $user->setBoxToken($token->getAccessToken());
+        $user->setRefreshToken($token->getRefreshToken());
+        $user->save();
+
+        return Redirect::to(Session::pull('redirect'));
     }
 
     // TODO: @feliciousx revoke refresh token aswell

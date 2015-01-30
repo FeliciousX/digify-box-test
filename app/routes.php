@@ -19,7 +19,6 @@ Route::any('/logout', array('as' => 'logout', 'uses' => 'AuthController@logout')
 
 Route::group(['before' => 'auth'], function() {
     Route::get('/oauth/refresh', ['as' => 'oauth.refresh', 'uses' => 'AuthController@refreshToken']);
-    Route::get('/profile', array('as' => 'profile', 'uses' => 'ProfileController@index'));
-
     Route::resource('box', 'BoxAPIController');
 });
+

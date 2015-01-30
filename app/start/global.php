@@ -1,5 +1,7 @@
 <?php
 
+use OAuth\Common\Token\Exception\ExpiredTokenException;
+
 /*
 |--------------------------------------------------------------------------
 | Register The Laravel Class Loader
@@ -45,6 +47,29 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 | shown, which includes a detailed stack trace during debug.
 |
 */
+
+/**
+ * Refreshes token when it's expired
+ *
+ * TODO: @feliciousx removes duplicate from 'AuthController@refreshToken'
+ */
+App::error(function(ExpiredTokenException $e)
+{
+        // user Curl instead of StreamClient
+        OAuth::setHttpClient('CurlClient');
+        // get Box service
+        $box = OAuth::consumer('Box', route('login.box'));
+
+        $token = $box->refreshAccessToken(Session::get('token'));
+        Session::put('token', $token);
+
+        $user = Auth::user();
+        $user->setBoxToken($token->getAccessToken());
+        $user->setRefreshToken($token->getRefreshToken());
+        $user->save();
+
+        return Redirect::to(Session::pull('redirect'));
+});
 
 App::error(function(Exception $exception, $code)
 {

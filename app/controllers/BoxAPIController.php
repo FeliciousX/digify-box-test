@@ -17,7 +17,10 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function index()
 	{
-        return Response::json($this->box->request('/folders/0'));
+        $result = json_decode($this->box->request('/folders/0/items'));
+
+        View::share('files', $result);
+        return View::make('pages.box');
 	}
 
 
@@ -51,7 +54,24 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+        $type = Input::get('type');
+
+        if (strcmp($type, 'folder') == 0) {
+            $result = json_decode($this->box->request('/folders/'.$id.'/items'));
+            View::share('files', $result);
+            return View::make('pages.box');
+        }
+        elseif (strcmp($type, 'file') == 0) {
+            // TODO: @feliciousx allow user to download their file? guess the mimetype?
+            /**
+            $response = Response::make($this->box->request('/files/'.$id.'/content'), 200);
+            $response->header('Content-Disposition', 'attachment; filename='.$id);
+            $response->header('Content-Type', 'application/');
+            return $response;
+            **/
+        }
+
+        return Redirect::to(Session::pull('referer'));
 	}
 
 

@@ -13,13 +13,16 @@
 
 App::before(function($request)
 {
-	//
+    // TODO: @felicioux Test if this works for 'AuthController@refreshToken'
+    if (Request::server('HTTP_REFERER')) {
+        Session::put('redirect', Request::server('HTTP_REFERER'));
+    }
 });
 
 
 App::after(function($request, $response)
 {
-	//
+    //echo Session::get('redirect');
 });
 
 /*
