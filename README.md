@@ -3,7 +3,7 @@ Assignment for Digify, using Box API.
 
 ##Requirements##
 - [x] allows users to authenticate with Box (www.box.com)
-- [ ] allows authenticated user to view a directory listing of their Box account
+- [x] allows authenticated user to view a directory listing of their Box account
 - [ ] allows authenticated user to view preview image files in their Box account folder
 - [ ] allows authenticated user to upload a file on their Box account
 - [x] allows authenticated user to sign-out
