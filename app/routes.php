@@ -13,8 +13,7 @@
 
 Route::get('/', array('as' => 'index', 'uses' => 'HomeController@index'));
 
-Route::any('/login', array('as' => 'login', 'uses' => 'AuthController@login'));
-Route::get('/login/box', array('as' => 'login.box', 'uses' => 'AuthController@loginWithBox'));
+Route::get('/login', array('as' => 'login', 'uses' => 'AuthController@loginWithBox'));
 Route::any('/logout', array('as' => 'logout', 'uses' => 'AuthController@logout'));
 
 Route::group(['before' => 'auth'], function() {

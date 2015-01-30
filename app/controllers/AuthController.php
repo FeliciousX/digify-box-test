@@ -5,36 +5,15 @@
  */
 class AuthController extends BaseController {
 
-    /**
-     * Simple form login
-     */
-    public function login()
+    // Box API that handles the displaying of listing files and folders
+    protected $box;
+
+    public function __construct()
     {
-        $data = array();
-        $data['message'] = array();
-
-        if (Request::isMethod('post')) {
-            $validator = Validator::make(Input::all(), array(
-                'user.login' => 'required',
-                'user.password' => 'required'
-            ));
-
-            if ($validator->passes()) {
-                $credentials = array(
-                    'login' => Input::get('user.login'),
-                    'password' => Input::get('user.password')
-                );
-
-                if (Auth::attempt($credentials)) {
-                    return Redirect::route('box.index');
-                }
-            }
-
-            Session::put('error', 'Username and/or password invalid.');
-            return Redirect::back();
-        }
-
-        return View::make('pages.login', $data);
+        // user Curl instead of StreamClient
+        OAuth::setHttpClient('CurlClient');
+        // get Box service
+        $this->box = OAuth::consumer('Box', route('login'));
     }
 
     /**
@@ -46,20 +25,16 @@ class AuthController extends BaseController {
         $code = Input::get('code');
         $state = Input::get('state');
 
-        // user Curl instead of StreamClient
-        OAuth::setHttpClient('CurlClient');
-        // get Box service
-        $box = OAuth::consumer('Box', route('login.box'));
 
         // if code is provided, get user data and sign in
         if ( ! empty($code)) {
             // Callback request from Box, get the token
-            $token = $box->requestAccessToken($code, $state);
+            $token = $this->box->requestAccessToken($code, $state);
 
             Session::put('token', $token);
 
             // Send a request with it
-            $result = json_decode($box->request('/users/me'), true);
+            $result = json_decode($this->box->request('/users/me'), true);
 
             $this->handleBoxLogin($token, $result);
             return Redirect::route('box.index');
@@ -67,7 +42,7 @@ class AuthController extends BaseController {
         // ask for permission first
         else {
             // get box authorization
-            $url = $box->getAuthorizationUri();
+            $url = $this->box->getAuthorizationUri();
 
             // return to Box login url
             return Redirect::to((string)$url);
@@ -116,12 +91,7 @@ class AuthController extends BaseController {
      */
     public function refreshToken()
     {
-        // user Curl instead of StreamClient
-        OAuth::setHttpClient('CurlClient');
-        // get Box service
-        $box = OAuth::consumer('Box', route('login.box'));
-
-        $token = $box->refreshAccessToken(Session::get('token'));
+        $token = $this->box->refreshAccessToken(Session::get('token'));
         Session::put('token', $token);
 
         $user = Auth::user();
@@ -132,10 +102,11 @@ class AuthController extends BaseController {
         return Redirect::to(Session::pull('redirect'));
     }
 
-    // TODO: @feliciousx revoke refresh token aswell
     public function logout()
     {
+        // revoke the token
+        $this->box->request('https://api.box.com/oauth2/revoke');
         Auth::logout();
-        return Redirect::route('login');
+        return Redirect::to('index');
     }
 }

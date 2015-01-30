@@ -58,7 +58,7 @@ App::error(function(ExpiredTokenException $e)
         // user Curl instead of StreamClient
         OAuth::setHttpClient('CurlClient');
         // get Box service
-        $box = OAuth::consumer('Box', route('login.box'));
+        $box = OAuth::consumer('Box', route('login'));
 
         $token = $box->refreshAccessToken(Session::get('token'));
         Session::put('token', $token);

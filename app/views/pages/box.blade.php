@@ -24,7 +24,13 @@
 <tbody id="listFiles">
 @foreach ($folder->item_collection->entries as $row)
 <tr>
-<td>{{ $row->type }}</td>
+<td>
+    @if (str_is('file', $row->type))
+    <span class="glyphicon glyphicon-file text-muted"></span>
+    @else
+    <span class="glyphicon glyphicon-folder-close text-muted"></span>
+    @endif
+</td>
 <td><a href="{{ route('box.show', [$row->id, 'type' => $row->type]) }}">{{ $row->name }}</a></td>
 </tr>
 @endforeach

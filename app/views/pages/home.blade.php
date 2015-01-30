@@ -5,10 +5,13 @@
 
 @section ('content')
 <div class="row">
-<div class="col-xs-4 col-xs-offset-4">
-    <h1>Welcome to Boxify.</h1>
-    <a href="{{ action('login.box') }}" class="btn btn-primary btn-lg">Login with  Box</a>
-</div>
+    <div class="page-header">
+        <h1 class="text-info">Welcome to Boxify!
+        <small>
+            <a href="{{ action('login') }}" class="btn btn-default">Login with  Box</a>
+        </small>
+        </h1>
+    </div>
 </div>
 @stop
 

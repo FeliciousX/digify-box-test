@@ -30,7 +30,7 @@
                     </ul>
                 </li>
             @else
-                <li>{{ link_to_route('login.box', 'Login') }}</li>
+                <li>{{ link_to_route('login', 'Login') }}</li>
             @endif
             </ul>
         </div><!-- /.navbar-collapse -->

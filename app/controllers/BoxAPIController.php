@@ -7,8 +7,10 @@ class BoxAPIController extends \BaseController {
 
     public function __construct()
     {
+        // user Curl instead of StreamClient
         OAuth::setHttpClient('CurlClient');
-        $this->box = OAuth::consumer('Box', route('login.box'));
+        // get Box service
+        $this->box = OAuth::consumer('Box', route('login'));
     }
 
 	/**
@@ -43,7 +45,13 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function store()
 	{
-        Input::get('');
+        $name = Input::get('name');
+        $parent_id = Input::get('parent.id');
+
+        $parent = ['id' => $parent_id];
+
+        
+        return Redirect::to(Session::pull('redirect'));
 	}
 
 
