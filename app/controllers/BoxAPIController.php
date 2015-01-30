@@ -1,5 +1,7 @@
 <?php
 
+use GuzzleHttp\Post\PostFile;
+
 class BoxAPIController extends \BaseController {
 
     // Box API that handles the displaying of listing files and folders
@@ -41,22 +43,51 @@ class BoxAPIController extends \BaseController {
 	/**
 	 * Store a newly created resource in storage.
      *
-     * TODO: Allow user to upload file
-     *
 	 * @return Response
 	 */
 	public function store()
 	{
-        $name = Input::get('fileName');
-        $parent_id = Input::get('parentId');
+        if (Input::hasFile('fileInput')) {
+            $name = Input::get('fileName');
+            $parent_id = Input::get('parentId');
+            $file = Input::file('fileInput');
 
-        // build body
-        $body = [
-            'name' => $name,
-            'parent' => [ 'id' => $parent_id ]
-        ];
+            // prepare data for upload
+            $mime = $file->getClientOriginalExtension();
+            /**
+            $attributes = [
+                'name' => $name,
+                'parent' => [ 'id' => $parent_id ]
+            ];
+            **/
 
-        $result = $this->box->request('folders', 'POST', json_encode($body));
+            //$body = ['attributes' => json_encode($attributes), 'file' => fopen($file, 'r')];
+
+            /** FAILS
+            $client = new GuzzleHttp\Client();
+            $r = $client->post('https://upload.box.com/2.0/files/content', [
+                'headers' => ['Authorization' => 'Bearer '.$accessToken],
+                'body' => $body
+            ]);
+            **/
+
+            // FAILS
+            //$result = $this->box->request('https://upload.box.com/api/2.0/files/content', 'POST', $body);
+            //
+            /**
+             * After trying a million different ways using Guzzle and OAuth Library, I resorted to this
+             * It works like a charm. This is so annoying.
+             * TODO: @feliciousx use the PHP way.
+             */
+            $accessToken = Session::get('token')->getAccessToken();
+
+            $cmd = "curl https://upload.box.com/api/2.0/files/content ".
+                '-H "Authorization: Bearer '.$accessToken. '" -X POST '.
+                '-F attributes=\'{"name":"' .$name.$mime. '", "parent": {"id": "'.$parent_id. '"}}\' '.
+                "-F file=@".$file->getRealPath()." -v";
+
+            $igaveup = shell_exec($cmd);
+        }
 
         return Redirect::to(Request::server('HTTP_REFERER'));
 	}
@@ -104,7 +135,17 @@ class BoxAPIController extends \BaseController {
             'parent' => [ 'id' => $id ]
         ];
 
+        // using OAuth works :)
         $result = $this->box->request('folders', 'POST', json_encode($body));
+
+        /** using Guzzle works :)
+        $accessToken = Session::get('token')->getAccessToken();
+        $client = new GuzzleHttp\Client();
+        $r = $client->post('https://api.box.com/2.0/folders', [
+            'headers' => ['Authorization' => 'Bearer '.$accessToken],
+            'json' => $body
+        ]);
+        **/
 
         return Redirect::to(Request::server('HTTP_REFERER'));
 	}

@@ -6,7 +6,6 @@
                 <h4 class="modal-title" id="newFolderTitle">New Folder</h4>
             </div><!-- /.modal-header -->
             {{ Form::open(['method' => 'PUT', 'route' => ['box.update', $parent->id]]) }}
-            {{ Form::hidden('type', 'folder') }}
             <div class="modal-body">
                 <div class="form-group">
                     {{ Form::label('folderName', 'Name') }}
