@@ -47,12 +47,11 @@
 
 </tbody>
 </table>
-<p>
-    {{ var_dump(Session::get('token')->getAccessToken()) }}
-</p>
 
 @include ('modal.new_folder', array('parent' => $folder))
 @include ('modal.new_file', array('parent' => $folder))
+@include ('modal.preview_photo')
+
 @stop
 
 @section ('extra_js')

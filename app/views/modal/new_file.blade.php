@@ -5,7 +5,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="newFileTitle">Upload File</h4>
             </div><!-- /.modal-header -->
-            {{ Form::open(['route' => ['box.view.store', $parent->id], 'files' => true]) }}
+            {{ Form::open(['route' => ['photo.store'], 'files' => true]) }}
+            {{ Form::hidden('parentId', $parent->id) }}
             <div class="modal-body">
                 <div class="form-group">
                     {{ Form::label('fileName', 'Name') }}
