@@ -17,7 +17,6 @@ Route::get('/login', array('as' => 'login', 'uses' => 'AuthController@loginWithB
 Route::any('/logout', array('as' => 'logout', 'uses' => 'AuthController@logout'));
 
 Route::group(['before' => 'auth'], function() {
-    Route::get('/oauth/refresh', ['as' => 'oauth.refresh', 'uses' => 'AuthController@refreshToken']);
     Route::resource('box', 'BoxAPIController');
     Route::resource('photo', 'PhotoController');
 });
