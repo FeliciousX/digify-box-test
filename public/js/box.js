@@ -1,31 +1,28 @@
 function previewFile($id) {
     $.ajax({
         type: 'GET',
-        url: '/box/'+$id+'/edit'
+        url: '/box/'+$id+'/view'
     })
     .done(function($data) {
         $url = $data['shared_link']['download_url'];
-        $apiKey = $data['api_key'];
-        console.log($apiKey);
 
         $.ajax({
-            type: 'POST',
-            url: '',
-            contentType: 'application/json',
-            xhrFields: {
-                withCredentials: false
-            },
-            // If you set any non-simple headers, your server must include these
-            // headers in the 'Access-Control-Allow-Headers' response header.
-            headers: {
-                'Authorization': 'Token '+$apiKey
-            },
-            data: {
-                'url': $url
-            }
+            type: 'GET',
+            url: '/box/'+$id+'/view/create?url='+$url,
         })
-        .done(function($data) {
-            console.log($data);
+        .done(function($doc) {
+            $documentId = $doc['id'];
+            
+            $.ajax({
+                type: 'PUT',
+                url: '/box/'+$id+'/view/'+$id,
+                data: {
+                    'documentId': $documentId
+                }
+            })
+            .done(function($sess) {
+                console.log($sess);
+            });
         });
 
     });

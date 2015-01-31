@@ -1,26 +1,68 @@
 <?php
 
+/**
+ * Uses the BoxView API
+ * API Documentation (https://developers.box.com/viewing-your-first-document/)
+ */
 class BoxViewAPIController extends \BaseController {
 
+    // Box View API Key
+    protected $apiKey;
+    // Box API that handles the displaying of listing files and folders
+    protected $box;
+
+    public function __construct()
+    {
+        $this->apiKey = Config::get('keys.api.box_view');
+
+        // user Curl instead of StreamClient
+        OAuth::setHttpClient('CurlClient');
+        // get Box service
+        $this->box = OAuth::consumer('Box', route('login'));
+    }
+
 	/**
-	 * Display a listing of the resource.
+	 * Make file sharable and get the file details
+     * using file id
 	 *
+     * @param int $fileId
+     *
 	 * @return Response
 	 */
-	public function index($parentId)
+	public function index($fileId)
 	{
-		//
+        // only allow ajax
+        if ( ! Request::ajax()) {
+            App::abort(405, 'Method not allowed');
+        }
+
+        $body = [
+            'shared_link' => ['access' => 'open']
+        ];
+        $result = $this->box->request('/files/'.$fileId, 'PUT', json_encode($body));
+
+        return Response::make($result, 200, ['Content-Type' => 'application/json']);
+
 	}
 
 
 	/**
-	 * Show the form for creating a new resource.
+	 * Queue the view from url and get the document id
+     *
+     * @param fileId
 	 *
 	 * @return Response
 	 */
-	public function create($parentId)
+	public function create($fileId)
 	{
-		//
+        $url = Input::get('url');
+        $client = new GuzzleHttp\Client();
+        $r = $client->post('https://view-api.box.com/1/documents', [
+            'headers' => ['Authorization' => 'Token '.$this->apiKey],
+            'json' => ['url' => $url]
+        ]);
+
+        return Response::make($r->getBody(), 200, ['Content-Type' => 'application/json']);
 	}
 
 
@@ -81,43 +123,16 @@ class BoxViewAPIController extends \BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-     * API Documentation (https://developers.box.com/viewing-your-first-document/)
      *
      * @param int $parentId
 	 * @param  int  $fileId
 	 * @return Response
 	 */
-	public function show($parentId, $fileId)
+	public function show($sessionId, $fileId)
 	{
-        // only allow ajax
-        if ( ! Request::ajax()) {
-            App::abort(405, 'Method not allowed');
-        }
+        $url = "https://view-api.box.com/1/sessions/{$sessionId}/view?theme=light";
 
-        // make file downloadable
-        $body = [
-            'shared_link' => ['access' => 'open']
-        ];
-        $result = $this->box->request('/files/'.$fileId, 'PUT', json_encode($body));
-
-        return Response::make($result, 200, ['Content-Type' => 'application/json']);
-
-        /** Use javascript :)
-        $client = new GuzzleHttp\Client();
-        $accessToken = Config::get('keys.api.box_view');
-        $r = $client->post('https://view-api.box.com/1/documents', [
-            'headers' => ['Authorization' => 'Token '.$accessToken],
-            'json' => ['url' => $url]
-        ]);
-
-        $res = json_decode($r->getBody());
-
-        $r = $client->post('https://view-api.box.com/1/sessions', [
-            'headers' => ['Authorization' => 'Token '.$accessToken],
-            'json' => ['document_id' => $res->id, 'duration' => 60]
-        ]);
-        **/
-
+        return $url;
 	}
 
 
@@ -134,14 +149,22 @@ class BoxViewAPIController extends \BaseController {
 
 
 	/**
-	 * Update the specified resource in storage.
+	 * Get session from document id
 	 *
-	 * @param  int  $id
+     * @param  int  $fileId
+	 * @param  int  $documentId
 	 * @return Response
 	 */
-	public function update($parentId, $id)
+	public function update($fileId, $parentId)
 	{
-		//
+        $documentId = Input::get('documentId');
+        $client = new GuzzleHttp\Client();
+        $r = $client->post('https://view-api.box.com/1/sessions', [
+            'headers' => ['Authorization' => 'Token '.$this->apiKey],
+            'json' => ['document_id' => $documentId, 'duration' => 60]
+        ]);
+
+        return Response::json($r->getHeaders());
 	}
 
 
