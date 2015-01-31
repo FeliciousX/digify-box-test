@@ -50,6 +50,7 @@ class BoxAPIController extends \BaseController {
         if (Input::hasFile('fileInput')) {
 
             $name = Input::get('fileName');
+            $name = Str::slug($name, '_');
             $parent_id = Input::get('parentId');
             $file = Input::file('fileInput');
 
