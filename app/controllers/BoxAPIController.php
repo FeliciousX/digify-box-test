@@ -48,9 +48,25 @@ class BoxAPIController extends \BaseController {
 	public function store()
 	{
         if (Input::hasFile('fileInput')) {
+
             $name = Input::get('fileName');
             $parent_id = Input::get('parentId');
             $file = Input::file('fileInput');
+
+            $validator = Validator::make([
+                'fileName' => $name,
+                'parentId' => $parent_id,
+            ],
+            [
+                'fileName' => 'required|alpha_dash',
+                'parentId' => 'required|numeric'
+            ]);
+
+            if ($validator->fails())
+            {
+                Session::put('error', 'Invalid File Name');
+                return Redirect::back();
+            }
 
             // prepare data for upload
             $mime = $file->getClientOriginalExtension();
@@ -77,13 +93,14 @@ class BoxAPIController extends \BaseController {
             /**
              * After trying a million different ways using Guzzle and OAuth Library, I resorted to this
              * It works like a charm. This is so annoying.
-             * TODO: @feliciousx use the PHP way.
+             * Filter everything!
+             * TODO: @feliciousx use the PHP way. THIS IS SO DANGEROUS. 
              */
             $accessToken = Session::get('token')->getAccessToken();
 
             $cmd = "curl https://upload.box.com/api/2.0/files/content ".
                 '-H "Authorization: Bearer '.$accessToken. '" -X POST '.
-                '-F attributes=\'{"name":"' .$name.$mime. '", "parent": {"id": "'.$parent_id. '"}}\' '.
+                '-F attributes=\'{"name":"' .$name.'.'.$mime. '", "parent": {"id": "'.$parent_id. '"}}\' '.
                 "-F file=@".$file->getRealPath()." -v";
 
             $igaveup = shell_exec($cmd);
