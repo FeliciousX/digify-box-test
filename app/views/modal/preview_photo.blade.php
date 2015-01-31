@@ -6,7 +6,9 @@
                 <h4 class="modal-title" id="photoTitle">Image Preview</h4>
             </div><!-- /.modal-header -->
             <div class="modal-body">
-            <img id="currentPhoto" src="" alt="loading..." class="img-thumbnail img-responsive"/>
+            <div id="placeholder">
+            </div>
+            <img id="loader" src="{{ asset('img/spinner.gif') }}" alt="..." />
             </div><!-- /.modal-body -->
             <div class="modal-footer">
                 <a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
