@@ -5,7 +5,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="newFolderTitle">New Folder</h4>
             </div><!-- /.modal-header -->
-            {{ Form::open(['method' => 'PUT', 'route' => ['box.update', $parent->id]]) }}
+            {{ Form::open(['method' => 'POST', 'route' => ['box.store']]) }}
+            {{ Form::hidden('parentId', $parent->id) }}
             <div class="modal-body">
                 <div class="form-group">
                     {{ Form::label('folderName', 'Name') }}
@@ -14,7 +15,7 @@
             </div><!-- /.modal-body -->
             <div class="modal-footer">
                 <a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
-                <button type="submit" class="btn btn-primary" >Create</button>
+                <button type="submit" class="btn btn-primary">Create</button>
             </div><!-- /.modal-footer -->
             {{ Form::close() }}
         </div><!-- /.modal-content -->

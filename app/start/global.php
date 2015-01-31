@@ -68,7 +68,7 @@ App::error(function(ExpiredTokenException $e)
         $user->setRefreshToken($token->getRefreshToken());
         $user->save();
 
-        return Redirect::to(Request::server('HTTP_REFERER'));
+        return Redirect::to(Request::url());
 });
 
 App::error(function(Exception $exception, $code)

@@ -37,7 +37,7 @@
 <tr>
     @if (str_is('file', $row->type))
     <td><span class="glyphicon glyphicon-file text-primary"></span></td>
-    <td><a href="{{ route('box.edit', $row->id) }}">{{ $row->name }}</a></td>
+    <td><a href="#" onclick="previewFile({{$row->id}})">{{ $row->name }}</a></td>
     @else
     <td><span class="glyphicon glyphicon-folder-close text-info"></span></td>
     <td><a href="{{ route('box.show', $row->id) }}">{{ $row->name }}</a></td>
@@ -48,10 +48,7 @@
 </tbody>
 </table>
 <p>
-    {{ var_dump(Session::get('token')) }}
-</p>
-<p>
-    {{ var_dump(Session::get('redirect')) }}
+    {{ var_dump(Session::get('token')->getAccessToken()) }}
 </p>
 
 @include ('modal.new_folder', array('parent' => $folder))
@@ -59,4 +56,5 @@
 @stop
 
 @section ('extra_js')
+<script type="text/javascript" src="{{ asset('js/box.js') }}"></script>
 @stop
