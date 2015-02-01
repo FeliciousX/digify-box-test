@@ -178,7 +178,8 @@ class PhotoController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+        $data = $this->box->request('/files/'.$id, 'DELETE');
+        return Response::make(null, 204);
 	}
 
 

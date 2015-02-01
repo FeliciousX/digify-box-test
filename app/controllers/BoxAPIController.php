@@ -116,7 +116,8 @@ class BoxAPIController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+        $result = $this->box->request('/folders/'.$id.'?recursive=true', 'DELETE');
+        return Response::make(null, 204);
 	}
 
 

@@ -30,17 +30,28 @@
 <thead>
     <th>Type</th>
     <th>Name</th>
+    <th>Actions</th>
 </thead>
 <tbody id="listFiles">
 
 @foreach ($folder->item_collection->entries as $row)
-<tr>
+<tr id="item_{{ $row->id }}">
     @if (str_is('file', $row->type))
     <td><span class="glyphicon glyphicon-file text-primary"></span></td>
     <td><a href="#" onclick="previewFile({{$row->id}})">{{ $row->name }}</a></td>
+    <td>
+        <button onclick="deleteFile({{$row->id}})" class="btn btn-default">
+        <span class="glyphicon glyphicon-trash text-danger"></span>
+        </button>
+    </td>
     @else
     <td><span class="glyphicon glyphicon-folder-close text-info"></span></td>
     <td><a href="{{ route('box.show', $row->id) }}">{{ $row->name }}</a></td>
+    <td>
+        <button onclick="deleteFolder({{$row->id}})" class="btn btn-default">
+        <span class="glyphicon glyphicon-trash text-danger"></span>
+        </button>
+    </td>
     @endif
 </tr>
 @endforeach
